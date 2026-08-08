@@ -1,0 +1,349 @@
+{% schema %}
+  {
+    "name": "Footer & Contact",
+    "settings": [
+      {
+        "type": "text",
+        "id": "newsletter_title",
+        "label": "Newsletter Title",
+        "default": "We are dedicated to giving you the best TEA!"
+      },
+      {
+        "type": "color",
+        "id": "bg_color_dark",
+        "label": "Footer Background Color",
+        "default": "#305235"
+      },
+      {
+        "type": "text",
+        "id": "company_name1",
+        "label": "Company Name",
+        "default": "Herbora"
+      },
+      {
+        "type": "text",
+        "id": "company_email",
+        "label": "Company Email",
+        "default": "herboraherbal@gmail.com"
+      }, {
+        "type": "text",
+        "id": "company_phone",
+        "label": "Company Phone",
+        "default": "+91 222 3457 980"
+      }, {
+        "type": "textarea",
+        "id": "company_address",
+        "label": "Company Address",
+        "default": "AK Complex, Madivala, Bangalore, Karnataka 560068"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Footer & Contact"
+      }
+    ]
+  }
+{% endschema %}
+
+<div class="footer-contact-wrapper">
+
+  <!-- Top White Contact Section -->
+  <div class="contact-section page-width">
+    <div class="contact-left">
+      <h3 class="contact-heading" style="color: #e27b58;">Contact</h3>
+      <h2>Get in touch with us</h2>
+      <p>Having questions or assistance? Whether it's about finding your perfect tea blend or learning more about herbora, we are here to help! Reach out to us.</p>
+
+      <div class="contact-details">
+        <div class="detail-item">
+          <strong>📞 Phone</strong><br>
+          {{ section.settings.company_phone }}
+        </div>
+        <div class="detail-item">
+          <strong>✉️ Email</strong><br>
+          {{ section.settings.company_email }}
+        </div>
+        <div class="detail-item">
+          <strong>📍 Location</strong><br>
+          {{ section.settings.company_address }}
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <div class="form-container">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" placeholder="Last name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="sample@gmail.com">
+        </div>
+        <div class="form-group">
+          <label>Phone no</label>
+          <input type="tel" placeholder="+91 000 000 0000">
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn-send">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Dark Footer Section -->
+  <div class="footer-dark-wrapper" style="background-color: {{ section.settings.bg_color_dark }};">
+    <div class="page-width footer-dark-content">
+
+      <!-- Newsletter Area -->
+      <div class="footer-newsletter">
+        <h3>{{ section.settings.newsletter_title }}</h3>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Enter your email">
+          <button type="submit">Get notified</button>
+        </div>
+      </div>
+
+      <!-- Footer Navigation -->
+      <div class="footer-bottom">
+        <div class="footer-brand">
+          <h2 style="font-style: italic; font-family: serif;">{{ section.settings.company_name }}</h2>
+          <p>{{ section.settings.company_email }}</p>
+          <p>{{ section.settings.company_phone }}</p>
+        </div>
+
+        <ul class="footer-links">
+          <li>
+            <a href="#">Home</a>
+          </li>
+          <li>
+            <a href="#">Our products</a>
+          </li>
+          <li>
+            <a href="#">Contact Us</a>
+          </li>
+          <li>
+            <a href="#">About Us</a>
+          </li>
+        </ul>
+
+        <div class="footer-legal">
+          <a href="#">Term of use</a>
+          <a href="#">privacy policy</a>
+          <p class="copyright">© 2025. all copyrights reserved</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .footer-contact-wrapper {
+    font-family: sans-serif;
+  }
+
+  /* Contact Section */
+  .contact-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    padding: 60px 20px;
+    background: #fff;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .contact-left {
+    flex: 1;
+    min-width: 300px;
+  }
+  .contact-left h2 {
+    font-family: "Georgia"
+    , serif;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  .contact-left p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  .detail-item {
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #444;
+  }
+
+  .contact-right {
+    flex: 1;
+    min-width: 350px;
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 10px;
+  }
+  .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  .form-group label {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  .form-group input,
+  .form-group textarea {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .btn-send {
+    background-color: #305235;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    float: right;
+    font-weight: bold;
+  }
+
+  /* Dark Footer Wrapper with Curved Top */
+  .footer-dark-wrapper {
+    padding: 80px 20px 40px;
+    margin-top: -20px;
+    border-top-left-radius: 100px;
+    border-top-right-radius: 100px;
+    color: #fff;
+    text-align: center;
+  }
+
+  .footer-newsletter h3 {
+    font-family: "Georgia"
+    , serif;
+    margin-bottom: 20px;
+    font-weight: normal;
+  }
+  .newsletter-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto 60px;
+    flex-wrap: wrap;
+  }
+  .newsletter-form input {
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: none;
+    flex: 1;
+    min-width: 200px;
+  }
+  .newsletter-form button {
+    padding: 12px 25px;
+    background: #fff;
+    color: #305235;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 30px;
+    gap: 20px;
+  }
+  .footer-brand {
+    text-align: left;
+  }
+  .footer-brand h2 {
+    margin: 0 0 10px;
+  }
+  .footer-brand p {
+    font-size: 0.9rem;
+    margin: 2px 0;
+    opacity: 0.8;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-links a {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.9;
+    font-size: 0.95rem;
+  }
+  .footer-links a:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+
+  .footer-legal {
+    text-align: right;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .footer-legal a {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.7;
+  }
+  .footer-legal a:hover {
+    opacity: 1;
+  }
+  .copyright {
+    opacity: 0.6;
+    margin: 5px 0 0;
+  }
+
+  @media (max-width: 768px) {
+    .contact-section {
+      flex-direction: column;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+    .footer-brand,
+    .footer-legal {
+      text-align: center;
+      align-items: center;
+    }
+    .footer-links {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .footer-dark-wrapper {
+      border-top-left-radius: 40px;
+      border-top-right-radius: 40px;
+      padding-top: 60px;
+    }
+  }
+</style>
