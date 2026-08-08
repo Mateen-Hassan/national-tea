@@ -1,0 +1,51 @@
+{% comment %} 
+    Renders a product card. 
+    Accepts:
+    - product: {Object} Product object (optional, if using static handles)
+    - title: {String} (optional if product object used)
+    - image: {String} (optional if product object used)
+    - price: {String} (optional if product object used)
+    - rating: {Number} (optional)
+    - button_text: {String} (optional)
+{% endcomment %}
+
+<div class="product-card" data-product-handle="{{ product.handle | default: '' }}">
+  <div class="product-card-inner">
+    {% if product.featured_image or image %}
+      <div class="product-image-wrapper">
+        <img
+          src="{{ product.featured_image | image_url: width: 400 | default: image }}"
+          loading="lazy"
+          alt="{{ product.title | default: title }}"
+          class="product-img">
+      </div>
+    {% else %}
+      <div class="product-image-wrapper placeholder-image">
+        {{ 'product-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+
+    <div class="product-info">
+      <h3 class="product-title">{{ product.title | default: title }}</h3>
+
+      <div class="product-meta">
+        <div class="product-rating">
+          {% if rating != blank %}
+            {% for i in (1..rating) %}
+              <span class="star">★</span>
+            {% endfor %}
+            {% assign empty_stars = 5 | minus: rating %}
+            {% for i in (1..empty_stars) %}
+              <span class="star empty">★</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <span class="product-price">{{ product.price | money | default: price }}</span>
+      </div>
+
+      <button class="btn-buy-now" type="button">
+        {{ button_text | default: 'Buy now' }} →
+      </button>
+    </div>
+  </div>
+</div>
