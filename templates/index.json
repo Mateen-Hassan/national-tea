@@ -199,6 +199,7 @@
           ]
         }
       },
+      "disabled": true,
       "name": "t:names.product_list",
       "settings": {
         "collection": "all",
@@ -219,10 +220,35 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "product_carousal_TU43Hk": {
+      "type": "product-carousal",
+      "name": "Product Carousel",
+      "settings": {
+        "heading": "Featured sale",
+        "bg_color": "#fcfdfa",
+        "btn_show_all_text": "Show all products",
+        "btn_show_all_link": "",
+        "collection": ""
+      }
+    },
+    "national_tea_footer_nn4krz": {
+      "type": "national-tea-footer",
+      "name": "Footer & Contact",
+      "settings": {
+        "newsletter_title": "We are dedicated to giving you the best TEA!",
+        "bg_color_dark": "#305235",
+        "company_name1": "Herbora",
+        "company_email": "herboraherbal@gmail.com",
+        "company_phone": "+91 222 3457 980",
+        "company_address": "AK Complex, Madivala, Bangalore, Karnataka 560068"
+      }
     }
   },
   "order": [
     "hero_banner_DrYbiz",
-    "product_list_fa6P9H"
+    "product_list_fa6P9H",
+    "product_carousal_TU43Hk",
+    "national_tea_footer_nn4krz"
   ]
 }
