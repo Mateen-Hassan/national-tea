@@ -294,10 +294,22 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "hero_banner_DrYbiz": {
+      "type": "hero-banner",
+      "name": "Hero Banner",
+      "settings": {
+        "title": "From Garden To Cup<br>Good Tea, Good Life.",
+        "button_1_text": "Shop Now",
+        "button_1_link": "",
+        "button_2_text": "Explore",
+        "button_2_link": ""
+      }
     }
   },
   "order": [
     "hero_jVaWmY",
-    "product_list_fa6P9H"
+    "product_list_fa6P9H",
+    "hero_banner_DrYbiz"
   ]
 }
