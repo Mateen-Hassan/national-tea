@@ -221,6 +221,22 @@
         "padding-block-end": 48
       }
     },
+    "why_choose_us_dtR39y": {
+      "type": "why-choose-us",
+      "name": "Centered Text Block",
+      "settings": {
+        "subheading": "Why choose us?",
+        "title": "Savor The Goodness of Organic Bliss",
+        "description": "Crafted with care, Steeped in nature,\nEnjoy of goodness of every cup.",
+        "bg_color": "#f0f9ef",
+        "subheading_color": "#c85a42",
+        "heading_color": "#2d4735",
+        "text_color": "#33443a",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "max_width": 720
+      }
+    },
     "product_carousal_TU43Hk": {
       "type": "product-carousal",
       "name": "Product Carousel",
@@ -230,31 +246,6 @@
         "btn_show_all_text": "Show all products",
         "btn_show_all_link": "",
         "collection": ""
-      }
-    },
-    "about_tea_JhXY4f": {
-      "type": "about-tea",
-      "name": "About Us (Dark)",
-      "settings": {
-        "subheading": "About us",
-        "title": "Herbora: Rooted in nature, Crafted for you!",
-        "description": "Herbora, we bring you the pure essence of nature in every sip. Sourced from organic forms and crafted with care, Our teas offers a harmonious blend of flavour and wellness. Experience the goodness of tradition, One cup at a time.",
-        "bg_color": "#2d4735",
-        "text_color": "#ffffff",
-        "accent_color": "#e27b58",
-        "image_position": "right"
-      }
-    },
-    "national_tea_footer_nn4krz": {
-      "type": "national-tea-footer",
-      "name": "Footer & Contact",
-      "settings": {
-        "newsletter_title": "We are dedicated to giving you the best TEA!",
-        "bg_color_dark": "#305235",
-        "company_name1": "Herbora",
-        "company_email": "herboraherbal@gmail.com",
-        "company_phone": "+91 222 3457 980",
-        "company_address": "AK Complex, Madivala, Bangalore, Karnataka 560068"
       }
     },
     "special_offer_fqqVTw": {
@@ -277,20 +268,30 @@
         "button_text": "#2d4735"
       }
     },
-    "why_choose_us_dtR39y": {
-      "type": "why-choose-us",
-      "name": "Centered Text Block",
+    "about_tea_JhXY4f": {
+      "type": "about-tea",
+      "name": "About Us (Dark)",
       "settings": {
-        "subheading": "Why choose us?",
-        "title": "Savor The Goodness of Organic Bliss",
-        "description": "Crafted with care, Steeped in nature,\nEnjoy of goodness of every cup.",
-        "bg_color": "#f0f9ef",
-        "subheading_color": "#c85a42",
-        "heading_color": "#2d4735",
-        "text_color": "#33443a",
-        "padding_top": 60,
-        "padding_bottom": 60,
-        "max_width": 720
+        "subheading": "About us",
+        "title": "National tea: Rooted in nature, Crafted for you!",
+        "description": "We bring you the pure essence of nature in every sip. Sourced from organic forms and crafted with care, Our teas offers a harmonious blend of flavour and wellness. Experience the goodness of tradition, One cup at a time.",
+        "bg_color": "#2d4735",
+        "text_color": "#ffffff",
+        "accent_color": "#e27b58",
+        "image": "shopify://shop_images/Mask_group.png",
+        "image_position": "right"
+      }
+    },
+    "national_tea_footer_nn4krz": {
+      "type": "national-tea-footer",
+      "name": "Footer & Contact",
+      "settings": {
+        "newsletter_title": "We are dedicated to giving you the best TEA!",
+        "bg_color_dark": "#305235",
+        "company_name1": "Herbora",
+        "company_email": "herboraherbal@gmail.com",
+        "company_phone": "+91 222 3457 980",
+        "company_address": "AK Complex, Madivala, Bangalore, Karnataka 560068"
       }
     }
   },
