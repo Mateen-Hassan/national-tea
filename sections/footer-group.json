@@ -220,9 +220,9 @@
       "settings": {
         "section_width": "page-width",
         "gap": 24,
-        "background_color": "{{ settings.color_palette.background }}",
+        "background_color": "#305136",
         "divider_thickness": 1,
-        "divider_color": "{{ settings.color_palette.color2 }}",
+        "divider_color": "#F0FFEC",
         "padding-block-start": 20,
         "padding-block-end": 48
       }
