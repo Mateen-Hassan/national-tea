@@ -282,18 +282,6 @@
         "image": "shopify://shop_images/Mask_group.png",
         "image_position": "right"
       }
-    },
-    "national_tea_footer_nn4krz": {
-      "type": "national-tea-footer",
-      "name": "Footer & Contact",
-      "settings": {
-        "newsletter_title": "We are dedicated to giving you the best TEA!",
-        "bg_color_dark": "#305235",
-        "company_name1": "Herbora",
-        "company_email": "herboraherbal@gmail.com",
-        "company_phone": "+91 222 3457 980",
-        "company_address": "AK Complex, Madivala, Bangalore, Karnataka 560068"
-      }
     }
   },
   "order": [
@@ -302,7 +290,6 @@
     "why_choose_us_dtR39y",
     "product_carousal_TU43Hk",
     "special_offer_fqqVTw",
-    "about_tea_JhXY4f",
-    "national_tea_footer_nn4krz"
+    "about_tea_JhXY4f"
   ]
 }
