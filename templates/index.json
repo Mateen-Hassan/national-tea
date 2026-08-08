@@ -232,6 +232,19 @@
         "collection": ""
       }
     },
+    "about_tea_JhXY4f": {
+      "type": "about-tea",
+      "name": "About Us (Dark)",
+      "settings": {
+        "subheading": "About us",
+        "title": "Herbora: Rooted in nature, Crafted for you!",
+        "description": "Herbora, we bring you the pure essence of nature in every sip. Sourced from organic forms and crafted with care, Our teas offers a harmonious blend of flavour and wellness. Experience the goodness of tradition, One cup at a time.",
+        "bg_color": "#2d4735",
+        "text_color": "#ffffff",
+        "accent_color": "#e27b58",
+        "image_position": "right"
+      }
+    },
     "national_tea_footer_nn4krz": {
       "type": "national-tea-footer",
       "name": "Footer & Contact",
@@ -243,12 +256,51 @@
         "company_phone": "+91 222 3457 980",
         "company_address": "AK Complex, Madivala, Bangalore, Karnataka 560068"
       }
+    },
+    "special_offer_fqqVTw": {
+      "type": "special-offer",
+      "name": "Special Offer Banner",
+      "settings": {
+        "subheading": "Special Offer",
+        "title": "Sip, Save & Enjoy!",
+        "description": "Discover exclusive deals & limited time offer on your favourite organic tea. Stock up on goodness while the savings last!",
+        "banner_badge": "LIMITED TIME",
+        "banner_title": "Good Tea, Good Life.",
+        "banner_description": "Enjoy 20% offer on all herbal blends",
+        "banner_button_text": "Shop now",
+        "banner_button_link": "",
+        "bg_color": "#f0f9ef",
+        "subheading_color": "#c85a42",
+        "heading_color": "#2d4735",
+        "text_color": "#33443a",
+        "button_bg": "#eef3ec",
+        "button_text": "#2d4735"
+      }
+    },
+    "why_choose_us_dtR39y": {
+      "type": "why-choose-us",
+      "name": "Centered Text Block",
+      "settings": {
+        "subheading": "Why choose us?",
+        "title": "Savor The Goodness of Organic Bliss",
+        "description": "Crafted with care, Steeped in nature,\nEnjoy of goodness of every cup.",
+        "bg_color": "#f0f9ef",
+        "subheading_color": "#c85a42",
+        "heading_color": "#2d4735",
+        "text_color": "#33443a",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "max_width": 720
+      }
     }
   },
   "order": [
     "hero_banner_DrYbiz",
     "product_list_fa6P9H",
+    "why_choose_us_dtR39y",
     "product_carousal_TU43Hk",
+    "special_offer_fqqVTw",
+    "about_tea_JhXY4f",
     "national_tea_footer_nn4krz"
   ]
 }
