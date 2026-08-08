@@ -1,0 +1,426 @@
+{% schema %}
+  {
+    "name": "Classic Single Product",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product Selection"
+      },
+      {
+        "type": "product",
+        "id": "product",
+        "label": "Select your product"
+      },
+      {
+        "type": "header",
+        "content": "Style & Layout"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Color",
+        "default": "#ffffff"
+      }, {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title Color",
+        "default": "#2d4735"
+      }, {
+        "type": "color",
+        "id": "price_color",
+        "label": "Price Color",
+        "default": "#2d4735"
+      }, {
+        "type": "color",
+        "id": "button_bg_color",
+        "label": "Add to Cart Button Color",
+        "default": "#2d4735"
+      }, {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Button Text Color",
+        "default": "#ffffff"
+      }, {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show Vendor/Brand",
+        "default": true
+      }, {
+        "type": "checkbox",
+        "id": "show_quantity",
+        "label": "Show Quantity Selector",
+        "default": true
+      }, {
+        "type": "header",
+        "content": "Media Settings"
+      }, {
+        "type": "checkbox",
+        "id": "enable_image_zoom",
+        "label": "Enable Image Zoom on Hover",
+        "default": true
+      }
+    ],
+    "presets": [
+      {
+        "name": "Classic Single Product"
+      }
+    ]
+  }
+{% endschema %}
+
+{% assign product = section.settings.product %}
+
+<div class="classic-product-wrapper" style="background-color: {{ section.settings.bg_color }};">
+  <div class="page-width">
+    <div class="classic-product-grid">
+
+      <!-- Left Column: Product Images -->
+      <div class="product-images-col">
+        <div class="product-main-image">
+          {% if product.featured_image %}
+            <img
+              src="{{ product.featured_image | image_url: width: 800 }}"
+              alt="{{ product.featured_image.alt | default: product.title }}"
+              loading="lazy"
+              class="main-img {% if section.settings.enable_image_zoom %}image-zoom{% endif %}">
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'main-img placeholder-img' }}
+          {% endif %}
+        </div>
+
+        {% if product.images.size > 1 %}
+          <div class="product-thumbnails">
+            {% for image in product.images %}
+              <div class="thumb-wrapper">
+                <img
+                  src="{{ image | image_url: width: 150 }}"
+                  alt="{{ image.alt }}"
+                  class="thumb-img">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Right Column: Product Details -->
+      <div class="product-info-col">
+
+        {% if section.settings.show_vendor and product.vendor != blank %}
+          <p class="product-vendor">{{ product.vendor }}</p>
+        {% endif %}
+
+        <h1 class="product-classic-title" style="color: {{ section.settings.title_color }};">
+          {{ product.title }}
+        </h1>
+
+        <div class="product-classic-price" style="color: {{ section.settings.price_color }};">
+          <span class="price-regular">{{ product.price | money }}</span>
+          {% if product.compare_at_price > product.price %}
+            <span class="price-sale">{{ product.compare_at_price | money }}</span>
+          {% endif %}
+        </div>
+
+        <div class="product-classic-description rte">
+          {{ product.description }}
+        </div>
+
+        {% form 'product'
+          , product
+          , class: 'classic-product-form' %}
+
+          {% unless product.has_only_default_variant %}
+            <div class="classic-variants">
+              {% for option in product.options_with_values %}
+                <div class="variant-wrapper">
+                  <label class="variant-label" for="Option-{{ option.name | handle }}">{{ option.name }}:</label>
+                  <select
+                    id="Option-{{ option.name | handle }}"
+                    class="variant-select"
+                    name="id"
+                    data-product-handle="{{ product.handle }}">
+                    {% for value in option.values %}
+                      <option
+                        value="{{ value }}"
+                        {% if option.selected_value == value %}
+                        selected{% endif %}>
+                        {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {% endfor %}
+            </div>
+          {% endunless %}
+
+          <div class="classic-actions">
+            {% if section.settings.show_quantity %}
+              <div class="quantity-wrapper">
+                <label for="Quantity">Quantity:</label>
+                <div class="quantity-selector">
+                  <button
+                    type="button"
+                    class="qty-btn minus"
+                    onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
+                  <input
+                    type="number"
+                    id="Quantity"
+                    name="quantity"
+                    value="1"
+                    min="1">
+                  <button
+                    type="button"
+                    class="qty-btn plus"
+                    onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                </div>
+              </div>
+            {% endif %}
+
+            <button
+              type="submit"
+              name="add"
+              class="btn-add-to-cart"
+              style="background-color: {{ section.settings.button_bg_color }}; color: {{ section.settings.button_text_color }};">
+              <span>Add to Cart</span>
+            </button>
+          </div>
+
+        {% endform %}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .classic-product-wrapper {
+    padding: 60px 20px;
+    width: 100%;
+  }
+  .classic-product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Left Column - Images */
+  .product-images-col {
+    flex: 1;
+    min-width: 320px;
+  }
+  .product-main-image {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fafafa;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  .main-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  .image-zoom:hover {
+    transform: scale(1.05);
+  }
+  .placeholder-img {
+    width: 100%;
+    height: 400px;
+    fill: #e0e0e0;
+  }
+
+  .product-thumbnails {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .thumb-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border 0.2s;
+  }
+  .thumb-wrapper:hover {
+    border-color: #ccc;
+  }
+  .thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Right Column - Info */
+  .product-info-col {
+    flex: 1;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-vendor {
+    font-family: sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #777;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  .product-classic-title {
+    font-family: "Georgia"
+    , serif;
+    font-size: 2.5rem;
+    margin: 0 0 15px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .product-classic-price {
+    font-family: sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+  }
+  .price-sale {
+    color: #d9534f;
+    text-decoration: line-through;
+    margin-left: 15px;
+    font-size: 1.1rem;
+    opacity: 0.7;
+  }
+  .product-classic-description {
+    font-family: sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 35px;
+  }
+  .product-classic-description p {
+    margin: 0 0 12px;
+  }
+
+  /* Form & Actions */
+  .classic-product-form {
+    width: 100%;
+  }
+
+  .classic-variants {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  .variant-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  .variant-label {
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  .variant-select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .classic-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+  }
+
+  .quantity-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .quantity-wrapper label {
+    font-family: sans-serif;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.9rem;
+  }
+  .quantity-selector {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .quantity-selector input {
+    width: 60px;
+    border: none;
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 10px 0;
+    outline: none;
+  }
+  .qty-btn {
+    background: #f5f5f5;
+    border: none;
+    padding: 0 15px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: bold;
+    color: #555;
+  }
+  .qty-btn:hover {
+    background: #e0e0e0;
+  }
+
+  .btn-add-to-cart {
+    flex: 1;
+    min-width: 180px;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  .btn-add-to-cart:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .classic-product-grid {
+      flex-direction: column;
+      gap: 30px;
+    }
+    .product-classic-title {
+      font-size: 2rem;
+    }
+    .main-img {
+      height: auto;
+    }
+    .classic-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .quantity-wrapper {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-add-to-cart {
+      width: 100%;
+    }
+  }
+</style>
