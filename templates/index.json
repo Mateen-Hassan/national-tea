@@ -228,7 +228,7 @@
         "subheading": "Why choose us?",
         "title": "Savor The Goodness of Organic Bliss",
         "description": "Crafted with care, Steeped in nature,\nEnjoy of goodness of every cup.",
-        "bg_color": "#F0FFEC",
+        "bg_color": "#f0ffec",
         "subheading_color": "#c85a42",
         "heading_color": "#2d4735",
         "text_color": "#33443a",
@@ -237,15 +237,19 @@
         "max_width": 720
       }
     },
-    "product_carousal_TU43Hk": {
-      "type": "product-carousal",
-      "name": "Product Carousel",
+    "classic_product_section_RnjPqi": {
+      "type": "classic-product-section",
+      "name": "Classic Single Product",
       "settings": {
-        "heading": "Featured sale",
+        "product": "national-tea",
         "bg_color": "#F0FFEC",
-        "btn_show_all_text": "Show all products",
-        "btn_show_all_link": "",
-        "collection": ""
+        "title_color": "#2d4735",
+        "price_color": "#2d4735",
+        "button_bg_color": "#2d4735",
+        "button_text_color": "#ffffff",
+        "show_vendor": true,
+        "show_quantity": true,
+        "enable_image_zoom": true
       }
     },
     "special_offer_fqqVTw": {
@@ -261,7 +265,7 @@
         "banner_description": "Enjoy 20% offer on all herbal blends",
         "banner_button_text": "Shop now",
         "banner_button_link": "",
-        "bg_color": "#F0FFEC",
+        "bg_color": "#f0ffec",
         "subheading_color": "#c85a42",
         "heading_color": "#2d4735",
         "text_color": "#33443a",
@@ -288,7 +292,7 @@
     "hero_banner_DrYbiz",
     "product_list_fa6P9H",
     "why_choose_us_dtR39y",
-    "product_carousal_TU43Hk",
+    "classic_product_section_RnjPqi",
     "special_offer_fqqVTw",
     "about_tea_JhXY4f"
   ]
