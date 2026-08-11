@@ -63,7 +63,7 @@
       <div class="hero-content">
         <h1 class="hero-title">{{ section.settings.title }}</h1>
         <div class="hero-buttons">
-          {% if section.settings.button_enabled %}
+          {% if section.settings.button_enabled == true %}
             <a href="{{ section.settings.button_1_link }}" class="btn btn-white">{{ section.settings.button_1_text }}</a>
             <a href="{{ section.settings.button_2_link }}" class="btn btn-outline">{{ section.settings.button_2_text }}</a>
           {% endif %}
