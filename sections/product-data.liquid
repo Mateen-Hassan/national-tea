@@ -1,6 +1,7 @@
 <!-- ============================================ -->
 <!-- SECTION: Product Info + AJAX Cart (Product Page) -->
-<!-- Modern Carousel: Thumbnail Strip + Main Image -->
+<!-- Uses Section Rendering API for variant updates -->
+<!-- Modern Carousel with Scrollable Thumbnails    -->
 <!-- ============================================ -->
 
 {% schema %}
@@ -99,8 +100,11 @@
 
 <!-- ===== USE PRODUCT OBJECT ===== -->
 {% assign product = product %}
+{% assign current_variant = product.selected_or_first_available_variant %}
 
-<div class="product-info-section" style="background-color: {{ section.settings.bg_color }};">
+<div class="product-info-section" style="background-color: {{ section.settings.bg_color }};" 
+     data-section-id="{{ section.id }}" 
+     data-section-type="product-info">
   <div class="page-width">
     <div class="product-layout">
 
@@ -144,8 +148,7 @@
       </div>
 
       <!-- ===== RIGHT: PRODUCT INFO ===== -->
-      <div class="product-details">
-
+      <div class="product-details" id="product-details">
         {% if section.settings.show_vendor and product.vendor != blank %}
           <p class="product-vendor">{{ product.vendor }}</p>
         {% endif %}
@@ -154,11 +157,11 @@
           {{ product.title }}
         </h1>
 
-        <!-- PRICE -->
+        <!-- PRICE - Section Rendering API Target -->
         <div class="product-price" style="color: {{ section.settings.price_color }};" id="product-price-display">
-          <span class="current-price" id="current-price">{{ product.selected_or_first_available_variant.price | money }}</span>
-          {% if product.compare_at_price_max > product.price %}
-            <span class="compare-price" id="compare-price">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+          <span class="current-price" id="current-price">{{ current_variant.price | money }}</span>
+          {% if current_variant.compare_at_price > current_variant.price %}
+            <span class="compare-price" id="compare-price">{{ current_variant.compare_at_price | money }}</span>
           {% endif %}
         </div>
 
@@ -166,8 +169,7 @@
         <div class="product-meta">
           {% if section.settings.show_availability %}
             <p class="availability" id="availability-status">
-              {% assign variant = product.selected_or_first_available_variant %}
-              {% if variant.available %}
+              {% if current_variant.available %}
                 <span style="color: #2d4735;">✓ In Stock</span>
               {% else %}
                 <span style="color: #b33;">✗ Out of Stock</span>
@@ -176,7 +178,7 @@
           {% endif %}
           {% if section.settings.show_sku %}
             <p class="sku" id="sku-display">
-              SKU: <span id="sku-value">{{ product.selected_or_first_available_variant.sku | default: 'N/A' }}</span>
+              SKU: <span id="sku-value">{{ current_variant.sku | default: 'N/A' }}</span>
             </p>
           {% endif %}
         </div>
@@ -221,7 +223,7 @@
             </div>
           {% endunless %}
 
-          <input type="hidden" name="id" id="variant-id-input" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="id" id="variant-id-input" value="{{ current_variant.id }}">
 
           <!-- ACTIONS -->
           <div class="product-actions">
@@ -260,7 +262,6 @@
 
         <!-- AJAX MESSAGE -->
         <div id="cart-message" class="cart-message"></div>
-
       </div>
     </div>
   </div>
@@ -629,11 +630,15 @@
 </style>
 
 <!-- ============================================ -->
-<!-- AJAX JAVASCRIPT + CAROUSEL LOGIC             -->
+<!-- JAVASCRIPT: SECTION RENDERING API + CAROUSEL -->
 <!-- ============================================ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // ---- MODERN CAROUSEL ----
+    const sectionId = '{{ section.id }}';
+    const productHandle = '{{ product.handle }}';
+    const sectionContainer = document.querySelector(`[data-section-id="${sectionId}"]`);
+
+    // ---- CAROUSEL ----
     const mainImage = document.getElementById('main-product-image');
     const thumbStrip = document.getElementById('thumbnail-strip');
     const thumbItems = document.querySelectorAll('.thumb-item');
@@ -650,7 +655,6 @@
       });
     {% endfor %}
 
-    // If no images, use featured image or placeholder
     if (images.length === 0) {
       {% if product.featured_image %}
         images.push({
@@ -660,7 +664,6 @@
       {% endif %}
     }
 
-    // Update main image
     function updateCarousel(index) {
       if (images.length === 0) return;
       if (index < 0) index = images.length - 1;
@@ -673,12 +676,10 @@
         mainImage.alt = imgData.alt || 'Product image';
       }
 
-      // Update active thumbnail
       thumbItems.forEach((thumb, i) => {
         thumb.classList.toggle('active-thumb', i === currentIndex);
       });
 
-      // Scroll thumbnail into view if needed
       if (thumbStrip && thumbItems.length > 0) {
         const activeThumb = thumbItems[currentIndex];
         if (activeThumb) {
@@ -698,12 +699,11 @@
       });
     });
 
-    // Scroll buttons for thumbnail strip
+    // Scroll buttons
     if (scrollLeftBtn && thumbStrip) {
       scrollLeftBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         thumbStrip.scrollBy({ left: -160, behavior: 'smooth' });
-        // Also move to previous image
         updateCarousel(currentIndex - 1);
       });
     }
@@ -732,32 +732,105 @@
       }
     });
 
-    // ---- AJAX CART LOGIC ----
-    const form = document.getElementById('product-form');
-    const addBtn = document.getElementById('add-to-cart-btn');
-    const buyBtn = document.getElementById('buy-now-btn');
-    const msgEl = document.getElementById('cart-message');
+    // ---- SECTION RENDERING API ----
+    // Update price, SKU, availability, and image when variant changes
+    const variantSelects = document.querySelectorAll('.variant-select');
     const variantInput = document.getElementById('variant-id-input');
     const priceCurrent = document.getElementById('current-price');
     const priceCompare = document.getElementById('compare-price');
     const skuSpan = document.getElementById('sku-value');
     const availStatus = document.getElementById('availability-status');
 
-    // Variant data from Shopify
-    const variants = {{ product.variants | json }};
-    const optionNames = {{ product.options | json }};
+    async function updateVariantWithAPI(selectedOptions) {
+      // Build URL with query parameters for Section Rendering API
+      const params = new URLSearchParams({
+        section_id: sectionId,
+        product_handle: productHandle,
+        variant: selectedOptions
+      });
 
-    // ----- Helpers -----
-    function getSelectedVariantId() {
-      const selects = document.querySelectorAll('.variant-select');
-      if (selects.length === 0) {
-        return variants.length > 0 ? variants[0].id : null;
+      try {
+        const response = await fetch(`?section_id=${sectionId}&variant=${selectedOptions}`);
+        if (!response.ok) throw new Error('Failed to fetch variant data');
+
+        const html = await response.text();
+
+        // Parse the HTML to extract updated content
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // Extract the updated price display
+        const newPriceDisplay = doc.querySelector('#product-price-display');
+        if (newPriceDisplay && priceCurrent && priceCurrent.parentNode) {
+          const newCurrentPrice = newPriceDisplay.querySelector('#current-price');
+          const newComparePrice = newPriceDisplay.querySelector('#compare-price');
+
+          if (newCurrentPrice) {
+            priceCurrent.textContent = newCurrentPrice.textContent;
+          }
+          if (priceCompare) {
+            if (newComparePrice && newComparePrice.textContent.trim() !== '') {
+              priceCompare.textContent = newComparePrice.textContent;
+              priceCompare.style.display = 'inline';
+            } else {
+              priceCompare.style.display = 'none';
+            }
+          }
+        }
+
+        // Update SKU
+        const newSku = doc.querySelector('#sku-value');
+        if (newSku && skuSpan) {
+          skuSpan.textContent = newSku.textContent;
+        }
+
+        // Update Availability
+        const newAvailability = doc.querySelector('#availability-status');
+        if (newAvailability && availStatus) {
+          availStatus.innerHTML = newAvailability.innerHTML;
+        }
+
+        // Update main image if variant has featured image
+        const newVariantId = doc.querySelector('#variant-id-input');
+        if (newVariantId) {
+          variantInput.value = newVariantId.value;
+
+          // Try to find if the variant has a featured image
+          const variants = {{ product.variants | json }};
+          const variant = variants.find(v => v.id == newVariantId.value);
+          if (variant && variant.featured_image && mainImage) {
+            mainImage.src = variant.featured_image.src;
+            // Update carousel index to match
+            const imgIndex = images.findIndex(img => img.src === variant.featured_image.src);
+            if (imgIndex !== -1) {
+              currentIndex = imgIndex;
+              thumbItems.forEach((thumb, i) => {
+                thumb.classList.toggle('active-thumb', i === currentIndex);
+              });
+            }
+          }
+        }
+
+      } catch (error) {
+        console.error('Section Rendering API error:', error);
+        // Fallback: use the existing JavaScript variant data
+        updateVariantWithJS();
       }
+    }
+
+    // Fallback method using JavaScript (if API fails)
+    function updateVariantWithJS() {
+      const variants = {{ product.variants | json }};
+      const optionNames = {{ product.options | json }};
+      const selects = document.querySelectorAll('.variant-select');
+
       const selected = {};
       selects.forEach(sel => {
         const name = sel.getAttribute('data-option-name') || sel.id.replace('Option-', '').trim();
         selected[name] = sel.value;
       });
+
+      let foundVariant = null;
       for (let v of variants) {
         let match = true;
         for (let i = 0; i < optionNames.length; i++) {
@@ -767,13 +840,82 @@
             break;
           }
         }
-        if (match) return v.id;
+        if (match) {
+          foundVariant = v;
+          break;
+        }
       }
-      return variants.length > 0 ? variants[0].id : null;
+
+      if (!foundVariant) return;
+
+      // Update price
+      if (priceCurrent) {
+        priceCurrent.textContent = Shopify.formatMoney(foundVariant.price, {{ shop.money_format | json }});
+      }
+      if (priceCompare) {
+        if (foundVariant.compare_at_price && foundVariant.compare_at_price > foundVariant.price) {
+          priceCompare.textContent = Shopify.formatMoney(foundVariant.compare_at_price, {{ shop.money_format | json }});
+          priceCompare.style.display = 'inline';
+        } else {
+          priceCompare.style.display = 'none';
+        }
+      }
+
+      // Update SKU
+      if (skuSpan) {
+        skuSpan.textContent = foundVariant.sku || 'N/A';
+      }
+
+      // Update Availability
+      if (availStatus) {
+        if (foundVariant.available) {
+          availStatus.innerHTML = '<span style="color:#2d4735;">✓ In Stock</span>';
+        } else {
+          availStatus.innerHTML = '<span style="color:#b33;">✗ Out of Stock</span>';
+        }
+      }
+
+      // Update variant ID
+      if (variantInput) {
+        variantInput.value = foundVariant.id;
+      }
+
+      // Update image
+      if (foundVariant.featured_image && mainImage) {
+        mainImage.src = foundVariant.featured_image.src;
+        const imgIndex = images.findIndex(img => img.src === foundVariant.featured_image.src);
+        if (imgIndex !== -1) {
+          currentIndex = imgIndex;
+          thumbItems.forEach((thumb, i) => {
+            thumb.classList.toggle('active-thumb', i === currentIndex);
+          });
+        }
+      }
     }
 
-    function getVariantById(id) {
-      return variants.find(v => v.id === id) || null;
+    // Handle variant change events
+    variantSelects.forEach(sel => {
+      sel.addEventListener('change', function() {
+        // Collect all selected options
+        const options = [];
+        variantSelects.forEach(s => {
+          options.push(s.value);
+        });
+        const selectedOptions = options.join(',');
+
+        // Update with Section Rendering API
+        updateVariantWithAPI(selectedOptions);
+      });
+    });
+
+    // ---- AJAX CART LOGIC ----
+    const form = document.getElementById('product-form');
+    const addBtn = document.getElementById('add-to-cart-btn');
+    const buyBtn = document.getElementById('buy-now-btn');
+    const msgEl = document.getElementById('cart-message');
+
+    function getVariantId() {
+      return variantInput ? variantInput.value : null;
     }
 
     function getQuantity() {
@@ -794,63 +936,6 @@
       }
     }
 
-    // ----- Update UI on variant change -----
-    function updateVariantDisplay(variantId) {
-      const v = getVariantById(variantId);
-      if (!v) return;
-
-      if (priceCurrent) {
-        priceCurrent.textContent = Shopify.formatMoney(v.price, {{ shop.money_format | json }});
-      }
-      if (priceCompare) {
-        if (v.compare_at_price && v.compare_at_price > v.price) {
-          priceCompare.textContent = Shopify.formatMoney(v.compare_at_price, {{ shop.money_format | json }});
-          priceCompare.style.display = 'inline';
-        } else {
-          priceCompare.style.display = 'none';
-        }
-      }
-
-      if (skuSpan) {
-        skuSpan.textContent = v.sku || 'N/A';
-      }
-
-      if (availStatus) {
-        if (v.available) {
-          availStatus.innerHTML = '<span style="color:#2d4735;">✓ In Stock</span>';
-        } else {
-          availStatus.innerHTML = '<span style="color:#b33;">✗ Out of Stock</span>';
-        }
-      }
-
-      // Update main image if variant has featured image
-      if (v.featured_image && mainImage) {
-        mainImage.src = v.featured_image.src;
-        const variantImgSrc = v.featured_image.src;
-        const imgIndex = images.findIndex(img => img.src === variantImgSrc);
-        if (imgIndex !== -1) {
-          currentIndex = imgIndex;
-          thumbItems.forEach((thumb, i) => {
-            thumb.classList.toggle('active-thumb', i === currentIndex);
-          });
-        }
-      }
-    }
-
-    function updateVariant() {
-      const id = getSelectedVariantId();
-      if (id) {
-        variantInput.value = id;
-        updateVariantDisplay(id);
-      }
-    }
-
-    // ----- Attach change events -----
-    document.querySelectorAll('.variant-select').forEach(sel => {
-      sel.addEventListener('change', updateVariant);
-    });
-
-    // ----- AJAX add to cart -----
     function ajaxAddToCart(variantId, quantity, callback) {
       fetch('/cart/add.js', {
         method: 'POST',
@@ -878,10 +963,10 @@
       });
     }
 
-    // ----- Submit: Add to Cart -----
+    // Submit: Add to Cart
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const id = getSelectedVariantId();
+      const id = getVariantId();
       const qty = getQuantity();
       if (!id) { showMessage('Please select a valid variant.', true); return; }
 
@@ -899,9 +984,9 @@
       });
     });
 
-    // ----- Buy Now -----
+    // Buy Now
     buyBtn.addEventListener('click', function() {
-      const id = getSelectedVariantId();
+      const id = getVariantId();
       const qty = getQuantity();
       if (!id) { showMessage('Please select a valid variant.', true); return; }
 
@@ -923,15 +1008,11 @@
       });
     });
 
-    // ----- Init -----
-    updateVariant();
-
-    // Ensure first thumbnail is active if there are images
+    // Initialize: ensure first thumbnail is active
     if (thumbItems.length > 0) {
       thumbItems[0].classList.add('active-thumb');
     }
 
-    // If there's only one image, hide scroll buttons
     if (images.length <= 1) {
       if (scrollLeftBtn) scrollLeftBtn.style.display = 'none';
       if (scrollRightBtn) scrollRightBtn.style.display = 'none';
