@@ -253,17 +253,6 @@
         "enable_image_zoom": true
       }
     },
-    "product_carousal_RgbbzC": {
-      "type": "product-carousal",
-      "name": "Product Carousel",
-      "settings": {
-        "heading": "Featured sale",
-        "bg_color": "#f0ffec",
-        "btn_show_all_text": "Show all products",
-        "btn_show_all_link": "",
-        "collection": ""
-      }
-    },
     "special_offer_fqqVTw": {
       "type": "special-offer",
       "name": "Special Offer Banner",
@@ -305,7 +294,6 @@
     "product_list_fa6P9H",
     "why_choose_us_dtR39y",
     "classic_product_section_RnjPqi",
-    "product_carousal_RgbbzC",
     "special_offer_fqqVTw",
     "about_tea_JhXY4f"
   ]
