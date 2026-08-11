@@ -1,6 +1,6 @@
 <!-- ============================================ -->
 <!-- SECTION: Product Info + AJAX Cart (Product Page) -->
-<!-- Uses the product object, preset = "product info section" -->
+<!-- With Fully Functional Image Carousel          -->
 <!-- ============================================ -->
 
 {% schema %}
@@ -104,26 +104,34 @@
   <div class="page-width">
     <div class="product-layout">
 
-      <!-- ===== LEFT: MEDIA ===== -->
+      <!-- ===== LEFT: MEDIA CAROUSEL ===== -->
       <div class="product-media">
-        <div class="main-image-wrapper">
-          {% if product.featured_image %}
-            <img
-              src="{{ product.featured_image | image_url: width: 800 }}"
-              alt="{{ product.featured_image.alt | default: product.title }}"
-              loading="lazy"
-              class="main-product-image {% if section.settings.enable_image_zoom %}image-zoom{% endif %}"
-              id="main-product-image"
-            >
-          {% else %}
-            {{ 'product-1' | placeholder_svg_tag: 'main-product-image placeholder-img' }}
-          {% endif %}
+        <div class="carousel-container">
+          <!-- Main Image -->
+          <div class="main-image-wrapper">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 800 }}"
+                alt="{{ product.featured_image.alt | default: product.title }}"
+                loading="lazy"
+                class="main-product-image {% if section.settings.enable_image_zoom %}image-zoom{% endif %}"
+                id="main-product-image"
+              >
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'main-product-image placeholder-img' }}
+            {% endif %}
+          </div>
+
+          <!-- Carousel Controls -->
+          <button class="carousel-btn prev-btn" id="prev-btn" aria-label="Previous image">❮</button>
+          <button class="carousel-btn next-btn" id="next-btn" aria-label="Next image">❯</button>
         </div>
 
+        <!-- Thumbnails -->
         {% if section.settings.show_thumbnails and product.images.size > 1 %}
-          <div class="thumbnail-strip">
+          <div class="thumbnail-strip" id="thumbnail-strip">
             {% for image in product.images %}
-              <div class="thumb-item" data-image="{{ image | image_url: width: 800 }}">
+              <div class="thumb-item {% if forloop.first %}active-thumb{% endif %}" data-index="{{ forloop.index0 }}" data-image="{{ image | image_url: width: 800 }}">
                 <img
                   src="{{ image | image_url: width: 120 }}"
                   alt="{{ image.alt }}"
@@ -272,49 +280,118 @@
     margin: 0 auto;
   }
 
-  /* ===== MEDIA ===== */
+  /* ===== MEDIA CAROUSEL ===== */
   .product-media {
     flex: 1 1 45%;
     min-width: 320px;
+    position: relative;
   }
-  .main-image-wrapper {
+
+  .carousel-container {
+    position: relative;
     border-radius: 12px;
     overflow: hidden;
     background: #fafafa;
     margin-bottom: 15px;
   }
+
+  .main-image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .main-product-image {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
     display: block;
     transition: transform 0.4s ease;
   }
+
   .image-zoom:hover {
     transform: scale(1.05);
   }
+
   .placeholder-img {
     width: 100%;
-    height: 450px;
+    height: 100%;
     fill: #e0e0e0;
   }
 
+  /* Carousel Buttons */
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    color: #333;
+    font-weight: bold;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .carousel-btn:hover {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  .carousel-btn:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  .prev-btn {
+    left: 12px;
+  }
+
+  .next-btn {
+    right: 12px;
+  }
+
+  /* Thumbnails */
   .thumbnail-strip {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: flex-start;
   }
+
   .thumb-item {
     width: 70px;
     height: 70px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
-    border: 2px solid transparent;
-    transition: border 0.2s;
+    border: 3px solid transparent;
+    transition: border 0.2s, opacity 0.2s;
+    flex-shrink: 0;
   }
+
   .thumb-item:hover {
     border-color: #ccc;
   }
+
+  .thumb-item.active-thumb {
+    border-color: {{ section.settings.accent_color }};
+    opacity: 1;
+  }
+
   .thumb-item img {
     width: 100%;
     height: 100%;
@@ -516,14 +593,117 @@
     .btn-buy-now {
       width: 100%;
     }
+
+    .carousel-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 1.2rem;
+    }
+
+    .thumb-item {
+      width: 56px;
+      height: 56px;
+    }
   }
 </style>
 
 <!-- ============================================ -->
-<!-- AJAX JAVASCRIPT                              -->
+<!-- AJAX JAVASCRIPT + CAROUSEL LOGIC             -->
 <!-- ============================================ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // ---- CAROUSEL ----
+    const mainImage = document.getElementById('main-product-image');
+    const thumbItems = document.querySelectorAll('.thumb-item');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let currentIndex = 0;
+    const images = [];
+
+    // Collect all image URLs
+    {% for image in product.images %}
+      images.push({
+        src: "{{ image | image_url: width: 800 }}",
+        alt: "{{ image.alt | escape }}"
+      });
+    {% endfor %}
+
+    // If no images, use featured image or placeholder
+    if (images.length === 0) {
+      {% if product.featured_image %}
+        images.push({
+          src: "{{ product.featured_image | image_url: width: 800 }}",
+          alt: "{{ product.featured_image.alt | default: product.title | escape }}"
+        });
+      {% else %}
+        // placeholder will be shown
+      {% endif %}
+    }
+
+    // Update main image
+    function updateCarousel(index) {
+      if (images.length === 0) return;
+      if (index < 0) index = images.length - 1;
+      if (index >= images.length) index = 0;
+      currentIndex = index;
+
+      const imgData = images[currentIndex];
+      if (mainImage && imgData) {
+        mainImage.src = imgData.src;
+        mainImage.alt = imgData.alt || 'Product image';
+      }
+
+      // Update active thumbnail
+      thumbItems.forEach((thumb, i) => {
+        thumb.classList.toggle('active-thumb', i === currentIndex);
+      });
+    }
+
+    // Thumbnail clicks
+    thumbItems.forEach((thumb, index) => {
+      thumb.addEventListener('click', function() {
+        const imgSrc = this.getAttribute('data-image');
+        if (imgSrc && mainImage) {
+          mainImage.src = imgSrc;
+        }
+        updateCarousel(index);
+      });
+    });
+
+    // Previous button
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        updateCarousel(currentIndex - 1);
+      });
+    }
+
+    // Next button
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        updateCarousel(currentIndex + 1);
+      });
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', function(e) {
+      const container = document.querySelector('.product-media');
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      // Check if carousel is in viewport
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          updateCarousel(currentIndex - 1);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          updateCarousel(currentIndex + 1);
+        }
+      }
+    });
+
+    // ---- AJAX CART LOGIC ----
     const form = document.getElementById('product-form');
     const addBtn = document.getElementById('add-to-cart-btn');
     const buyBtn = document.getElementById('buy-now-btn');
@@ -531,7 +711,6 @@
     const variantInput = document.getElementById('variant-id-input');
     const priceCurrent = document.getElementById('current-price');
     const priceCompare = document.getElementById('compare-price');
-    const mainImage = document.getElementById('main-product-image');
     const skuSpan = document.getElementById('sku-value');
     const availStatus = document.getElementById('availability-status');
 
@@ -591,7 +770,6 @@
       const v = getVariantById(variantId);
       if (!v) return;
 
-      // Price
       if (priceCurrent) {
         priceCurrent.textContent = Shopify.formatMoney(v.price, {{ shop.money_format | json }});
       }
@@ -604,12 +782,10 @@
         }
       }
 
-      // SKU
       if (skuSpan) {
         skuSpan.textContent = v.sku || 'N/A';
       }
 
-      // Availability
       if (availStatus) {
         if (v.available) {
           availStatus.innerHTML = '<span style="color:#2d4735;">✓ In Stock</span>';
@@ -618,9 +794,18 @@
         }
       }
 
-      // Image
+      // Update main image if variant has featured image
       if (v.featured_image && mainImage) {
         mainImage.src = v.featured_image.src;
+        // Also update carousel to show this image if it exists in the images array
+        const variantImgSrc = v.featured_image.src;
+        const imgIndex = images.findIndex(img => img.src === variantImgSrc);
+        if (imgIndex !== -1) {
+          currentIndex = imgIndex;
+          thumbItems.forEach((thumb, i) => {
+            thumb.classList.toggle('active-thumb', i === currentIndex);
+          });
+        }
       }
     }
 
@@ -635,18 +820,6 @@
     // ----- Attach change events -----
     document.querySelectorAll('.variant-select').forEach(sel => {
       sel.addEventListener('change', updateVariant);
-    });
-
-    // ----- Thumbnail click -----
-    document.querySelectorAll('.thumb-item').forEach(el => {
-      el.addEventListener('click', function() {
-        const src = this.getAttribute('data-image') || this.querySelector('img')?.src;
-        if (src && mainImage) {
-          let newSrc = src.replace(/_120x/g, '_800x');
-          if (newSrc === src) newSrc = src;
-          mainImage.src = newSrc;
-        }
-      });
     });
 
     // ----- AJAX add to cart -----
@@ -724,5 +897,16 @@
 
     // ----- Init -----
     updateVariant();
+
+    // Ensure first thumbnail is active if there are images
+    if (thumbItems.length > 0) {
+      thumbItems[0].classList.add('active-thumb');
+    }
+
+    // If there's only one image, hide carousel controls
+    if (images.length <= 1) {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+    }
   });
 </script>
