@@ -1,6 +1,6 @@
 <!-- ============================================ -->
 <!-- SECTION: Product Info + AJAX Cart (Product Page) -->
-<!-- With Fully Functional Image Carousel          -->
+<!-- Modern Carousel: Thumbnail Strip + Main Image -->
 <!-- ============================================ -->
 
 {% schema %}
@@ -104,11 +104,11 @@
   <div class="page-width">
     <div class="product-layout">
 
-      <!-- ===== LEFT: MEDIA CAROUSEL ===== -->
+      <!-- ===== LEFT: MODERN CAROUSEL ===== -->
       <div class="product-media">
-        <div class="carousel-container">
-          <!-- Main Image -->
-          <div class="main-image-wrapper">
+        <div class="carousel-wrapper">
+          <!-- Main Image Display -->
+          <div class="main-image-container">
             {% if product.featured_image %}
               <img
                 src="{{ product.featured_image | image_url: width: 800 }}"
@@ -122,25 +122,25 @@
             {% endif %}
           </div>
 
-          <!-- Carousel Controls -->
-          <button class="carousel-btn prev-btn" id="prev-btn" aria-label="Previous image">❮</button>
-          <button class="carousel-btn next-btn" id="next-btn" aria-label="Next image">❯</button>
-        </div>
-
-        <!-- Thumbnails -->
-        {% if section.settings.show_thumbnails and product.images.size > 1 %}
-          <div class="thumbnail-strip" id="thumbnail-strip">
-            {% for image in product.images %}
-              <div class="thumb-item {% if forloop.first %}active-thumb{% endif %}" data-index="{{ forloop.index0 }}" data-image="{{ image | image_url: width: 800 }}">
-                <img
-                  src="{{ image | image_url: width: 120 }}"
-                  alt="{{ image.alt }}"
-                  loading="lazy"
-                >
+          <!-- Thumbnail Strip with Scroll -->
+          {% if section.settings.show_thumbnails and product.images.size > 1 %}
+            <div class="thumbnail-strip-wrapper">
+              <button class="thumb-scroll-btn scroll-left" id="scroll-left" aria-label="Scroll thumbnails left">‹</button>
+              <div class="thumbnail-strip" id="thumbnail-strip">
+                {% for image in product.images %}
+                  <div class="thumb-item {% if forloop.first %}active-thumb{% endif %}" data-index="{{ forloop.index0 }}" data-image="{{ image | image_url: width: 800 }}">
+                    <img
+                      src="{{ image | image_url: width: 120 }}"
+                      alt="{{ image.alt }}"
+                      loading="lazy"
+                    >
+                  </div>
+                {% endfor %}
               </div>
-            {% endfor %}
-          </div>
-        {% endif %}
+              <button class="thumb-scroll-btn scroll-right" id="scroll-right" aria-label="Scroll thumbnails right">›</button>
+            </div>
+          {% endif %}
+        </div>
       </div>
 
       <!-- ===== RIGHT: PRODUCT INFO ===== -->
@@ -280,25 +280,23 @@
     margin: 0 auto;
   }
 
-  /* ===== MEDIA CAROUSEL ===== */
+  /* ===== MODERN CAROUSEL ===== */
   .product-media {
     flex: 1 1 45%;
     min-width: 320px;
+  }
+
+  .carousel-wrapper {
     position: relative;
   }
 
-  .carousel-container {
-    position: relative;
+  .main-image-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
     border-radius: 12px;
     overflow: hidden;
     background: #fafafa;
-    margin-bottom: 15px;
-  }
-
-  .main-image-wrapper {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -322,69 +320,53 @@
     fill: #e0e0e0;
   }
 
-  /* Carousel Buttons */
-  .carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.85);
-    border: none;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    font-size: 1.5rem;
-    cursor: pointer;
+  /* Thumbnail Strip with scroll */
+  .thumbnail-strip-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-    color: #333;
-    font-weight: bold;
-    padding: 0;
-    line-height: 1;
+    gap: 8px;
+    position: relative;
   }
 
-  .carousel-btn:hover {
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transform: translateY(-50%) scale(1.05);
-  }
-
-  .carousel-btn:active {
-    transform: translateY(-50%) scale(0.95);
-  }
-
-  .prev-btn {
-    left: 12px;
-  }
-
-  .next-btn {
-    right: 12px;
-  }
-
-  /* Thumbnails */
   .thumbnail-strip {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 4px 0;
+    flex: 1;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .thumbnail-strip::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .thumbnail-strip::-webkit-scrollbar-thumb {
+    background: {{ section.settings.accent_color }};
+    border-radius: 4px;
+  }
+
+  .thumbnail-strip::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
   }
 
   .thumb-item {
-    width: 70px;
-    height: 70px;
+    flex: 0 0 80px;
+    height: 80px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
     border: 3px solid transparent;
-    transition: border 0.2s, opacity 0.2s;
+    transition: border 0.2s, opacity 0.2s, transform 0.2s;
     flex-shrink: 0;
   }
 
   .thumb-item:hover {
     border-color: #ccc;
+    transform: scale(1.02);
   }
 
   .thumb-item.active-thumb {
@@ -396,6 +378,38 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* Scroll buttons */
+  .thumb-scroll-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #e0e0e0;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    color: #333;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    font-weight: bold;
+    padding: 0;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .thumb-scroll-btn:hover {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: scale(1.05);
+  }
+
+  .thumb-scroll-btn:active {
+    transform: scale(0.92);
   }
 
   /* ===== DETAILS ===== */
@@ -594,14 +608,21 @@
       width: 100%;
     }
 
-    .carousel-btn {
-      width: 36px;
-      height: 36px;
-      font-size: 1.2rem;
+    .thumb-item {
+      flex: 0 0 64px;
+      height: 64px;
     }
 
+    .thumb-scroll-btn {
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
     .thumb-item {
-      width: 56px;
+      flex: 0 0 56px;
       height: 56px;
     }
   }
@@ -612,11 +633,12 @@
 <!-- ============================================ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // ---- CAROUSEL ----
+    // ---- MODERN CAROUSEL ----
     const mainImage = document.getElementById('main-product-image');
+    const thumbStrip = document.getElementById('thumbnail-strip');
     const thumbItems = document.querySelectorAll('.thumb-item');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
+    const scrollLeftBtn = document.getElementById('scroll-left');
+    const scrollRightBtn = document.getElementById('scroll-right');
     let currentIndex = 0;
     const images = [];
 
@@ -635,8 +657,6 @@
           src: "{{ product.featured_image | image_url: width: 800 }}",
           alt: "{{ product.featured_image.alt | default: product.title | escape }}"
         });
-      {% else %}
-        // placeholder will be shown
       {% endif %}
     }
 
@@ -657,31 +677,41 @@
       thumbItems.forEach((thumb, i) => {
         thumb.classList.toggle('active-thumb', i === currentIndex);
       });
+
+      // Scroll thumbnail into view if needed
+      if (thumbStrip && thumbItems.length > 0) {
+        const activeThumb = thumbItems[currentIndex];
+        if (activeThumb) {
+          const stripRect = thumbStrip.getBoundingClientRect();
+          const thumbRect = activeThumb.getBoundingClientRect();
+          if (thumbRect.left < stripRect.left || thumbRect.right > stripRect.right) {
+            activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
     }
 
     // Thumbnail clicks
     thumbItems.forEach((thumb, index) => {
       thumb.addEventListener('click', function() {
-        const imgSrc = this.getAttribute('data-image');
-        if (imgSrc && mainImage) {
-          mainImage.src = imgSrc;
-        }
         updateCarousel(index);
       });
     });
 
-    // Previous button
-    if (prevBtn) {
-      prevBtn.addEventListener('click', function(e) {
+    // Scroll buttons for thumbnail strip
+    if (scrollLeftBtn && thumbStrip) {
+      scrollLeftBtn.addEventListener('click', function(e) {
         e.stopPropagation();
+        thumbStrip.scrollBy({ left: -160, behavior: 'smooth' });
+        // Also move to previous image
         updateCarousel(currentIndex - 1);
       });
     }
 
-    // Next button
-    if (nextBtn) {
-      nextBtn.addEventListener('click', function(e) {
+    if (scrollRightBtn && thumbStrip) {
+      scrollRightBtn.addEventListener('click', function(e) {
         e.stopPropagation();
+        thumbStrip.scrollBy({ left: 160, behavior: 'smooth' });
         updateCarousel(currentIndex + 1);
       });
     }
@@ -691,7 +721,6 @@
       const container = document.querySelector('.product-media');
       if (!container) return;
       const rect = container.getBoundingClientRect();
-      // Check if carousel is in viewport
       if (rect.top < window.innerHeight && rect.bottom > 0) {
         if (e.key === 'ArrowLeft') {
           e.preventDefault();
@@ -797,7 +826,6 @@
       // Update main image if variant has featured image
       if (v.featured_image && mainImage) {
         mainImage.src = v.featured_image.src;
-        // Also update carousel to show this image if it exists in the images array
         const variantImgSrc = v.featured_image.src;
         const imgIndex = images.findIndex(img => img.src === variantImgSrc);
         if (imgIndex !== -1) {
@@ -903,10 +931,25 @@
       thumbItems[0].classList.add('active-thumb');
     }
 
-    // If there's only one image, hide carousel controls
+    // If there's only one image, hide scroll buttons
     if (images.length <= 1) {
-      if (prevBtn) prevBtn.style.display = 'none';
-      if (nextBtn) nextBtn.style.display = 'none';
+      if (scrollLeftBtn) scrollLeftBtn.style.display = 'none';
+      if (scrollRightBtn) scrollRightBtn.style.display = 'none';
+    }
+
+    // Hide scroll buttons if thumbnails fit in viewport
+    function checkScrollButtons() {
+      if (!thumbStrip) return;
+      const canScrollLeft = thumbStrip.scrollLeft > 0;
+      const canScrollRight = thumbStrip.scrollLeft < thumbStrip.scrollWidth - thumbStrip.clientWidth - 1;
+      if (scrollLeftBtn) scrollLeftBtn.style.opacity = canScrollLeft ? '1' : '0.3';
+      if (scrollRightBtn) scrollRightBtn.style.opacity = canScrollRight ? '1' : '0.3';
+    }
+
+    if (thumbStrip) {
+      thumbStrip.addEventListener('scroll', checkScrollButtons);
+      setTimeout(checkScrollButtons, 100);
+      window.addEventListener('resize', checkScrollButtons);
     }
   });
 </script>

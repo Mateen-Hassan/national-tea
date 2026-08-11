@@ -488,11 +488,33 @@
         "enable_image_zoom": true,
         "show_thumbnails": true
       }
+    },
+    "special_offer_eX4dWG": {
+      "type": "special-offer",
+      "name": "Special Offer Banner",
+      "settings": {
+        "subheading": "Special Offer",
+        "title": "Sip, Save & Enjoy!",
+        "description": "Discover exclusive deals & limited time offer on your favourite organic tea. Stock up on goodness while the savings last!",
+        "banner_image": "shopify://shop_images/vecteezy_white-cup-of-hot-tea-and-dry-tea-leaf-on-wooden-table_9228931_1_9.jpg",
+        "banner_badge": "LIMITED TIME",
+        "banner_title": "Good Tea, Good Life.",
+        "banner_description": "Enjoy 20% offer on all herbal blends",
+        "banner_button_text": "Shop now",
+        "banner_button_link": "",
+        "bg_color": "#f0f9ef",
+        "subheading_color": "#c85a42",
+        "heading_color": "#2d4735",
+        "text_color": "#33443a",
+        "button_bg": "#eef3ec",
+        "button_text": "#2d4735"
+      }
     }
   },
   "order": [
     "main",
     "product_recommendations_qggXJq",
-    "product_data_P9mHM8"
+    "product_data_P9mHM8",
+    "special_offer_eX4dWG"
   ]
 }
