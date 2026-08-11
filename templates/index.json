@@ -242,7 +242,7 @@
       "name": "Classic Single Product",
       "settings": {
         "product": "national-tea",
-        "bg_color": "#F0FFEC",
+        "bg_color": "#f0ffec",
         "title_color": "#2d4735",
         "price_color": "#2d4735",
         "button_bg_color": "#2d4735",
@@ -286,6 +286,17 @@
         "image": "shopify://shop_images/1512_1.jpg",
         "image_position": "right"
       }
+    },
+    "product_carousal_RgbbzC": {
+      "type": "product-carousal",
+      "name": "Product Carousel",
+      "settings": {
+        "heading": "Featured sale",
+        "bg_color": "#fcfdfa",
+        "btn_show_all_text": "Show all products",
+        "btn_show_all_link": "",
+        "collection": ""
+      }
     }
   },
   "order": [
@@ -293,6 +304,7 @@
     "product_list_fa6P9H",
     "why_choose_us_dtR39y",
     "classic_product_section_RnjPqi",
+    "product_carousal_RgbbzC",
     "special_offer_fqqVTw",
     "about_tea_JhXY4f"
   ]
