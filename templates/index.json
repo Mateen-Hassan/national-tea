@@ -252,6 +252,17 @@
         "enable_image_zoom": true
       }
     },
+    "product_carousal_RgbbzC": {
+      "type": "product-carousal",
+      "name": "Product Carousel",
+      "settings": {
+        "heading": "Featured sale",
+        "bg_color": "#F0FFEC",
+        "btn_show_all_text": "Show all products",
+        "btn_show_all_link": "",
+        "collection": ""
+      }
+    },
     "special_offer_fqqVTw": {
       "type": "special-offer",
       "name": "Special Offer Banner",
@@ -285,17 +296,6 @@
         "accent_color": "#e27b58",
         "image": "shopify://shop_images/1512_1.jpg",
         "image_position": "right"
-      }
-    },
-    "product_carousal_RgbbzC": {
-      "type": "product-carousal",
-      "name": "Product Carousel",
-      "settings": {
-        "heading": "Featured sale",
-        "bg_color": "#fcfdfa",
-        "btn_show_all_text": "Show all products",
-        "btn_show_all_link": "",
-        "collection": ""
       }
     }
   },
