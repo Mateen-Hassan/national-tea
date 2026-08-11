@@ -1,20 +1,12 @@
 <!-- ============================================ -->
-<!-- SECTION: Product Page with Info & AJAX Cart  -->
+<!-- SECTION: Product Info + AJAX Cart (Product Page) -->
+<!-- Uses the product object, preset = "product info section" -->
 <!-- ============================================ -->
 
 {% schema %}
 {
   "name": "Product Info + AJAX Cart",
   "settings": [
-    {
-      "type": "header",
-      "content": "Product Selection"
-    },
-    {
-      "type": "product",
-      "id": "product",
-      "label": "Select your product"
-    },
     {
       "type": "header",
       "content": "Style & Layout"
@@ -98,15 +90,15 @@
   ],
   "presets": [
     {
-      "name": "Product Info + AJAX Cart"
+      "name": "Product Info + AJAX Cart",
+      "category": "Product"
     }
   ]
 }
 {% endschema %}
 
-{% assign product = section.settings.product %}
-{% assign accent = section.settings.accent_color %}
-{% assign text = section.settings.button_text_color %}
+<!-- ===== USE PRODUCT OBJECT ===== -->
+{% assign product = product %}
 
 <div class="product-info-section" style="background-color: {{ section.settings.bg_color }};">
   <div class="page-width">
@@ -240,7 +232,7 @@
               type="submit"
               name="add"
               class="btn-add-cart"
-              style="background-color: {{ accent }}; color: {{ text }};"
+              style="background-color: {{ section.settings.accent_color }}; color: {{ section.settings.button_text_color }};"
               id="add-to-cart-btn"
             >
               <span>Add to Cart</span>
@@ -249,7 +241,7 @@
             <button
               type="button"
               class="btn-buy-now"
-              style="background-color: {{ accent }}; color: {{ text }};"
+              style="background-color: {{ section.settings.accent_color }}; color: {{ section.settings.button_text_color }};"
               id="buy-now-btn"
             >
               <span>Buy It Now</span>
