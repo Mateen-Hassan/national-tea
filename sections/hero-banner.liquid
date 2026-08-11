@@ -5,11 +5,19 @@
       {
         "type": "image_picker",
         "id": "background_image",
-        "label": "Background Image"
-      }, {
+        "label": "Background Image (Desktop)"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image_mobile",
+        "label": "Background Image (Mobile)",
+        "info": "If not set, desktop image will be used on mobile."
+      },
+      {
         "type": "checkbox",
         "id": "button_enabled",
-        "label": "Enable Buttons"
+        "label": "Enable Buttons",
+        "default": true
       },
       {
         "type": "text",
@@ -27,12 +35,14 @@
         "type": "url",
         "id": "button_1_link",
         "label": "Button 1 Link"
-      }, {
+      },
+      {
         "type": "text",
         "id": "button_2_text",
         "label": "Button 2 Text",
         "default": "Explore"
-      }, {
+      },
+      {
         "type": "url",
         "id": "button_2_link",
         "label": "Button 2 Link"
@@ -46,7 +56,8 @@
   }
 {% endschema %}
 
-<div class="hero-section" style="background-image: url('{{ section.settings.background_image | img_url: 'master' }}');">
+<div class="hero-section" 
+     style="background-image: url('{{ section.settings.background_image | img_url: 'master' }}');">
   <div class="hero-overlay">
     <div class="page-width">
       <div class="hero-content">
@@ -54,9 +65,8 @@
         <div class="hero-buttons">
           {% if section.settings.button_enabled %}
             <a href="{{ section.settings.button_1_link }}" class="btn btn-white">{{ section.settings.button_1_text }}</a>
-          <a href="{{ section.settings.button_2_link }}" class="btn btn-outline">{{ section.settings.button_2_text }}</a>
+            <a href="{{ section.settings.button_2_link }}" class="btn btn-outline">{{ section.settings.button_2_text }}</a>
           {% endif %}
-          
         </div>
       </div>
     </div>
@@ -64,6 +74,7 @@
 </div>
 
 <style>
+  /* Base styles */
   .hero-section {
     background-size: cover;
     background-position: center;
@@ -75,30 +86,56 @@
     position: relative;
     height: 900px;
   }
+
+  /* Mobile background image via media query */
+  {% if section.settings.background_image_mobile %}
+    @media (max-width: 768px) {
+      .hero-section {
+        background-image: url('{{ section.settings.background_image_mobile | img_url: 'master' }}') !important;
+      }
+    }
+  {% endif %}
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .hero-content {
     color: #fff;
     z-index: 2;
     position: relative;
+    padding: 0 20px;
   }
-  @media screen(min-width: 1200px) {
+
+  @media screen and (min-width: 1200px) {
     .hero-content {
       width: 45%;
     }
   }
+
   .hero-title {
     font-size: 3.5rem;
     line-height: 1.2;
     margin-bottom: 20px;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    font-family: "Georgia"
-    , serif;
+    font-family: "Georgia", serif;
   }
+
   .hero-buttons {
     display: flex;
     gap: 20px;
     justify-content: center;
     flex-wrap: wrap;
   }
+
   .btn {
     padding: 12px 30px;
     border-radius: 4px;
@@ -106,7 +143,9 @@
     font-weight: 600;
     transition: all 0.3s ease;
     font-size: 1.1rem;
+    display: inline-block;
   }
+
   .btn-white {
     background-color: #fff;
     color: #3b5a44;
@@ -114,6 +153,7 @@
   .btn-white:hover {
     opacity: 0.9;
   }
+
   .btn-outline {
     background-color: transparent;
     border: 2px solid #fff;
@@ -124,6 +164,7 @@
     color: #3b5a44;
   }
 
+  /* Mobile & Tablet adjustments */
   @media (max-width: 768px) {
     .hero-title {
       font-size: 2.5rem;
@@ -131,6 +172,20 @@
     .hero-section {
       min-height: 400px;
       height: 600px;
+    }
+  }
+
+  /* Small screens (phones) */
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 2rem;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+    .hero-buttons {
+      gap: 12px;
     }
   }
 </style>
