@@ -14,6 +14,7 @@
       "name": "Hero Banner",
       "settings": {
         "background_image": "shopify://shop_images/ChatGPT_Image_Aug_8_2026_05_46_37_PM.png",
+        "button_enabled": false,
         "title": "From Garden To CupGood Tea, Good Life.",
         "button_1_text": "",
         "button_1_link": "",
@@ -257,7 +258,7 @@
       "name": "Product Carousel",
       "settings": {
         "heading": "Featured sale",
-        "bg_color": "#F0FFEC",
+        "bg_color": "#f0ffec",
         "btn_show_all_text": "Show all products",
         "btn_show_all_link": "",
         "collection": ""
@@ -275,7 +276,7 @@
         "banner_title": "Good Tea, Good Life.",
         "banner_description": "Enjoy 20% offer on all herbal blends",
         "banner_button_text": "Shop now",
-        "banner_button_link": "",
+        "banner_button_link": "shopify://products/national-tea",
         "bg_color": "#f0ffec",
         "subheading_color": "#c85a42",
         "heading_color": "#2d4735",
